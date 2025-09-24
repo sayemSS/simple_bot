@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import google.generativeai as genai
+from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
@@ -19,6 +20,7 @@ chat = model.start_chat(history=[])
 
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/chat', methods=['POST'])
 def chat_with_bot():

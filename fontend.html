@@ -1,129 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gemini ChatBot</title>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f7f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .chat-container {
-      width: 400px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .chat-header {
-      background: #4a90e2;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .chat-box {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-    }
-    .message {
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 8px;
-      max-width: 80%;
-    }
-    .user-message {
-      background: #d1ecf1;
-      align-self: flex-end;
-      text-align: right;
-    }
-    .bot-message {
-      background: #f8d7da;
-      align-self: flex-start;
-      text-align: left;
-    }
-    .chat-input {
-      display: flex;
-      border-top: 1px solid #ddd;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
-    .chat-input button {
-      background: #4a90e2;
-      border: none;
-      color: #fff;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .chat-input button:hover {
-      background: #357abd;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-id-input {
+            flex: 0 0 120px;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .user-id-input:focus {
+            border-color: #667eea;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 20px;
+            border: 1px solid #fcc;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            max-width: 70%;
+            margin-bottom: 15px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 90vh;
+                border-radius: 10px;
+            }
+            
+            .chat-input-container {
+                flex-direction: column;
+            }
+            
+            .user-id-input {
+                flex: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-header">🤖 Gemini ChatBot</div>
-    <div class="chat-box" id="chat-box"></div>
-    <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
+    <div class="chat-container">
+        <div class="chat-header">
+            🤖 AI Chatbot
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hello! I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" 
+                   class="user-id-input" 
+                   id="userIdInput" 
+                   placeholder="User ID" 
+                   value="user123">
+            
+            <input type="text" 
+                   class="message-input" 
+                   id="messageInput" 
+                   placeholder="Type your message..." 
+                   maxlength="500">
+            
+            <button class="send-button" id="sendButton" onclick="sendMessage()">
+                Send
+            </button>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const API_URL = "https://your-bot.onrender.com/chat"; // replace with your Render URL
-    const USER_ID = 13223254; // example user id
+    <script>
+        const API_URL = 'https://simple-bot-5vmc.onrender.com/chat';
+        
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const userIdInput = document.getElementById('userIdInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
 
-    function appendMessage(text, sender) {
-      const chatBox = document.getElementById("chat-box");
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
-      messageDiv.textContent = text;
-      chatBox.appendChild(messageDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+        // Auto-focus message input
+        messageInput.focus();
 
-    async function sendMessage() {
-      const input = document.getElementById("user-input");
-      const message = input.value.trim();
-      if (!message) return;
-
-      // Show user message
-      appendMessage(message, "user");
-      input.value = "";
-
-      try {
-        const response = await axios.post(API_URL, {
-          data: {
-            id: USER_ID,
-            message: message
-          }
+        // Send message on Enter key
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
-        const botResponse = response.data.bot_response || "No response";
-        appendMessage(botResponse, "bot");
-      } catch (error) {
-        console.error(error);
-        appendMessage("⚠️ Error: Could not connect to server.", "bot");
-      }
-    }
-  </script>
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            const userId = userIdInput.value.trim() || 'user123';
+            
+            if (!message) {
+                messageInput.focus();
+                return;
+            }
+
+            // Disable input and button
+            setInputsDisabled(true);
+            
+            // Add user message to chat
+            addMessage('user', message);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                // Prepare data in the format your API expects
+                const requestData = {
+                    data: {
+                        id: userId,
+                        message: message
+                    }
+                };
+
+                console.log('Sending request:', requestData);
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                // Hide typing indicator
+                hideTypingIndicator();
+                
+                // Add bot response to chat
+                if (data.bot_response) {
+                    addMessage('bot', data.bot_response);
+                } else {
+                    addMessage('bot', 'Sorry, I couldn\'t generate a response.');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                
+                // Show error message
+                const errorMsg = error.message.includes('Failed to fetch') 
+                    ? 'Connection failed. Please check if the server is running.'
+                    : `Error: ${error.message}`;
+                    
+                addErrorMessage(errorMsg);
+            } finally {
+                // Re-enable inputs
+                setInputsDisabled(false);
+                messageInput.focus();
+            }
+        }
+
+        function addMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addErrorMessage(errorText) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = errorText;
+            
+            chatMessages.appendChild(errorDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function setInputsDisabled(disabled) {
+            messageInput.disabled = disabled;
+            sendButton.disabled = disabled;
+            userIdInput.disabled = disabled;
+            
+            if (disabled) {
+                sendButton.textContent = 'Sending...';
+            } else {
+                sendButton.textContent = 'Send';
+            }
+        }
+
+        // Test connection on page load
+        window.addEventListener('load', function() {
+            console.log('Page loaded. API URL:', API_URL);
+        });
+    </script>
 </body>
 </html>
