@@ -1,0 +1,43 @@
+-- Create doctors table
+CREATE TABLE doctors (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    location VARCHAR(200),
+    experience INTEGER
+);
+
+-- Insert sample doctors
+INSERT INTO doctors (name, specialty, phone, location, experience) VALUES
+-- General Physicians
+('Dr. Ahmed Rahman', 'General Physician', '01711-123456', 'Dhanmondi, Dhaka', 15),
+('Dr. Fatima Khan', 'General Physician', '01811-234567', 'Gulshan, Dhaka', 12),
+
+-- Cardiologists
+('Dr. Karim Uddin', 'Cardiologist', '01911-345678', 'Uttara, Dhaka', 18),
+('Dr. Rashida Begum', 'Cardiologist', '01611-456789', 'Mirpur, Dhaka', 14),
+
+-- Nephrologists (Kidney specialists)
+('Dr. Nasir Hossain', 'Nephrologist', '01511-567890', 'Wari, Dhaka', 20),
+('Dr. Salma Akter', 'Nephrologist', '01411-678901', 'Mohammadpur, Dhaka', 16),
+
+-- Dermatologists
+('Dr. Rafiq Islam', 'Dermatologist', '01311-789012', 'Elephant Road, Dhaka', 13),
+('Dr. Amina Khatun', 'Dermatologist', '01211-890123', 'New Market, Dhaka', 9),
+
+-- Gastroenterologists
+('Dr. Habib Rahman', 'Gastroenterologist', '01111-901234', 'Panthapath, Dhaka', 17),
+('Dr. Ruma Begum', 'Gastroenterologist', '01711-012345', 'Bashundhara, Dhaka', 11),
+
+-- Orthopedic
+('Dr. Shahin Ahmed', 'Orthopedic', '01811-112233', 'Dhanmondi, Dhaka', 19),
+('Dr. Nasreen Khan', 'Orthopedic', '01911-223344', 'Gulshan, Dhaka', 12),
+
+-- ENT
+('Dr. Mizanur Rahman', 'ENT', '01611-334455', 'Uttara, Dhaka', 15),
+('Dr. Jesmin Ara', 'ENT', '01511-445566', 'Mirpur, Dhaka', 10),
+
+-- Gynecologist
+('Dr. Rokeya Begum', 'Gynecologist', '01411-556677', 'Wari, Dhaka', 18),
+('Dr. Fahima Khatun', 'Gynecologist', '01311-667788', 'Mohammadpur, Dhaka', 13);
