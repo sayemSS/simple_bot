@@ -12,7 +12,7 @@ if not api_key:
     raise ValueError('GEMINI_API_KEY variable not set')
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash')
 
 chat = model.start_chat(history=[])
 
